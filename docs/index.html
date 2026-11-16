@@ -1,0 +1,85 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudPulse Telemetry API — Проєкт ІПЗ</title>
+    <style>
+        :root {
+            --bg: #090D16;
+            --surface: #1E293B;
+            --border: #334155;
+            --text: #F1F5F9;
+            --muted: #94A3B8;
+            --cyan: #06B6D4;
+            --green: #10B981;
+            --amber: #F59E0B;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px 20px; line-height: 1.6; }
+        .container { max-width: 960px; margin: 0 auto; }
+        header { margin-bottom: 36px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+        .badges { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+        .tag { display: inline-block; background: var(--cyan); color: var(--bg); padding: 3px 12px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+        h1 { font-size: 40px; margin: 0 0 12px; }
+        .subtitle { color: var(--muted); font-size: 18px; margin: 0 0 20px; }
+        .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        a.btn { display: inline-block; padding: 11px 22px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 15px; transition: opacity 0.2s; }
+        a.btn-primary { background: var(--green); color: var(--bg); }
+        a.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        a.btn:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 28px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+        .card h2 { color: var(--cyan); font-size: 20px; margin-top: 0; }
+        code { background: #0F172A; padding: 2px 6px; border-radius: 6px; color: var(--green); font-size: 14px; }
+        .limits { margin-top: 28px; background: #0F172A; border: 1px solid var(--border); border-left: 4px solid var(--amber); border-radius: 12px; padding: 20px 24px; }
+        .limits h2 { color: var(--amber); font-size: 18px; margin-top: 0; }
+        footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="badges">
+                <span class="tag">v1.2.0 • MVP</span>
+                <a href="https://github.com/vitaliikohutiak25-dev/cloudpulse-ci/actions/workflows/ci.yml">
+                    <img src="https://github.com/vitaliikohutiak25-dev/cloudpulse-ci/actions/workflows/ci.yml/badge.svg" alt="Статус CI/CD пайплайну GitHub Actions">
+                </a>
+            </div>
+            <h1>CloudPulse Telemetry API</h1>
+            <p class="subtitle">Контейнеризований мікросервіс моніторингу вузлів (Python/Flask + Redis) із налаштованим CI/CD, модульними тестами та аудитом безпеки.</p>
+            <nav class="actions" aria-label="Посилання на ресурси проєкту">
+                <a class="btn btn-primary" href="https://github.com/vitaliikohutiak25-dev/cloudpulse-ci">Репозиторій на GitHub →</a>
+                <a class="btn btn-secondary" href="https://github.com/vitaliikohutiak25-dev/cloudpulse-ci/actions">Переглянути CI/CD Actions</a>
+                <a class="btn btn-secondary" href="https://github.com/vitaliikohutiak25-dev/cloudpulse-ci/blob/main/security-debt.md">Аудит безпеки (OWASP)</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="grid" aria-label="Ключові характеристики системи">
+                <article class="card">
+                    <h2>Архітектура та Docker</h2>
+                    <p>Двосервісний стек у віртуальній мережі <code>pulse_net</code>: Flask API на порту <code>8080</code> та кеш Redis 7.2 на <code>6379</code>. Оптимізований multi-stage <code>Dockerfile</code> на базі <code>python:3.11-slim</code>.</p>
+                </article>
+                <article class="card">
+                    <h2>Якість та Безпека</h2>
+                    <p>Проведено Code Review: рейтинг Pylint зріс з <code>6.67</code> до <code>9.29/10</code>. Оновлено Flask до <code>3.1.3</code> після виявлення <code>PYSEC-2026-2151</code> через <code>pip-audit</code>. SAST-перевірка <code>Bandit</code> зафіксувала <code>B104</code>.</p>
+                </article>
+                <article class="card">
+                    <h2>CI/CD та Тестування</h2>
+                    <p>GitHub Actions запускає лінтер, компіляцію та 2 тести <code>pytest</code> на матриці Python <code>3.10</code> та <code>3.11</code> при кожному push із пакуванням артефакту.</p>
+                </article>
+            </section>
+
+            <section class="limits" aria-label="Відомі обмеження MVP">
+                <h2>Відомі технічні обмеження (Технічний борг)</h2>
+                <p>Поточна версія є навчальним MVP: використовується dev-сервер Flask без <code>Gunicorn</code>, порт Redis <code>6379</code> доступний без пароля в локальному compose, а ендпоінт <code>/</code> не вимагає JWT-авторизації. Детальний план усунення зафіксовано у <code>security-debt.md</code>.</p>
+            </section>
+        </main>
+
+        <footer>
+            <span>Автор: Віталій Когутяк (vitaliikohutiak25-dev)</span>
+            <span>Документація: README.md • CHANGELOG.md (SemVer)</span>
+        </footer>
+    </div>
+</body>
+</html>
